@@ -10,7 +10,8 @@ class Card extends Component{
       showMenu: false,
       isPinReset: false,
       isEnterPin: false,
-      isResetPinSuccess: false
+      isResetPinSuccess: false,
+      sixOTP: ''
     }
     this.showMenu = this.showMenu.bind(this);
     this.closeMenu = this.closeMenu.bind(this);
@@ -35,9 +36,20 @@ class Card extends Component{
   }
 
   ResetPin(event){
+    const URL = 'http://localhost:5000/api/IlcMasters';
     this.setState({ showMenu: false, isPinReset: true, isEnterPin: false, isResetPinSuccess: false }, () => {
       document.removeEventListener('click', this.closeMenu);
-    })
+    });
+    fetch(URL)
+        .then(res => res.json())
+        .then((data) => {
+          console.log('Generated OTP from API: ', data);
+          this.setState({sixOTP: data})
+        })
+        .catch(
+          console.log('Error in the service'),
+          this.setState({sixOTP: ''})
+        )
   }
 
   submitOTP(){
@@ -84,6 +96,7 @@ class Card extends Component{
                   <br/>One Time Password will be sent to registered cell phone. Kindly enter it.
                   <br/>
                   <input type="password"/>
+                  {/* <input type="text" value={this.state.sixOTP}/> */}
                   <button onClick={this.submitOTP}>
                     Next
                   </button>
